@@ -37,14 +37,14 @@ export default function RootLayout({
           <SidebarComponent />
 
           {/* Contenedor general */}
-          <div className="bg-cyan-950 flex  w-full min-h-screen">
+          <div className="bg-cyan-950 flex flex-col w-full min-h-screen">
             {/* Header con trigger */}
             
 
-                <header className="flex flex-col items-center justify-between px-4 py-2 border-gray-900 border-b bg-gray-800 shadow-sm">
+                <header className="flex items-center  px-4 py-2 border-gray-900 border-b bg-gray-800 shadow-sm">
               {/* Botón para abrir/cerrar sidebar */}
               <SidebarTrigger />
-              <h1 className="text-lg font-semibold">Mi App</h1>
+              <h1 className="text-lg font-semibold font-mono text-white">Crowd Chat</h1>
             </header>
            
 

@@ -11,8 +11,9 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus } from "lucide-react"
+import { Edit, Plus, Trash } from "lucide-react"
 import { useState } from "react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu"
 
 export default function SidebarComponent() {
     const [chats, setChats] = useState([{
@@ -31,14 +32,32 @@ export default function SidebarComponent() {
 
     const ChatItem = ({item}) =>{
         return(
-            <button
-                  className="w-full text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
+            <span
+                  className="flex justify-between bg-red-500 text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
                 >
-                <span>
-                  <h1 className="text-white">{item.title}</h1>
-                  <button></button>
-                </span>
-            </button>
+                  <h1 className="text-white">{item.title}</h1>  
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button>...</button>
+                    </DropdownMenuTrigger>
+                     <DropdownMenuContent className="bg-gray-800 text-white w-56" align="start">
+                        <DropdownMenuLabel>Opciones</DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                        <DropdownMenuItem className="text-xs">
+                            <Edit />
+                            Cambiar Nombre de Chat
+                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-xs text-red-400">
+                            <Trash color="red"/>
+                            Eliminar Chat
+                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </span>
         )
     }
 
