@@ -29,6 +29,19 @@ export default function SidebarComponent() {
         ])
 }
 
+    const ChatItem = ({item}) =>{
+        return(
+            <button
+                  className="w-full text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
+                >
+                <span>
+                  <h1 className="text-white">{item.title}</h1>
+                  <button></button>
+                </span>
+            </button>
+        )
+    }
+
 
   return (
     <Sidebar className="hover:cursor-pointer">
@@ -51,12 +64,7 @@ export default function SidebarComponent() {
           <ScrollArea className="h-[400px] pr-2">
             <SidebarGroupContent className="flex flex-col gap-2 p-2">
               {chats.reverse().map((item) => (
-                <button
-                  key={item.id}
-                  className="w-full text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
-                >
-                  {item.title}
-                </button>
+                <ChatItem key={item.id} item={item} />
               ))}
             </SidebarGroupContent>
           </ScrollArea>
