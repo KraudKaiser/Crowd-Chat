@@ -3,7 +3,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -11,62 +10,76 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Edit, Plus, Trash } from "lucide-react"
-import { useState } from "react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import {  Plus,  } from "lucide-react"
+import React, { useState } from "react"
+import Dropdown from "./DropdownMenu"
+import { Input } from "../ui/input"
 
 export default function SidebarComponent() {
-    const [chats, setChats] = useState([{
-        id:1,
-        title:"hola"
-    }])
-    const addItem = () => {
-        setChats((prevItems) => [
-            {
-            id: prevItems.length + 1,
-            title: `chat numero ${prevItems.length + 1}`,
-            },
-            ...prevItems,
-        ])
-}
+  const [chats, setChats] = useState([{
+    id: 1,
+    title: "hola"
+  }])
 
-    const ChatItem = ({item}) =>{
-        return(
-            <span
-                  className="flex justify-between bg-red-500 text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
-                >
-                  <h1 className="text-white">{item.title}</h1>  
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <button>...</button>
-                    </DropdownMenuTrigger>
-                     <DropdownMenuContent className="bg-gray-800 text-white w-56" align="start">
-                        <DropdownMenuLabel>Opciones</DropdownMenuLabel>
-                        <DropdownMenuGroup>
-                        <DropdownMenuItem className="text-xs">
-                            <Edit />
-                            Cambiar Nombre de Chat
-                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs text-red-400">
-                            <Trash color="red"/>
-                            Eliminar Chat
-                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                        </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </span>
-        )
-    }
+
+  const addItem = () => {
+    setChats((prevItems) => [
+      {
+        id: chats.length + 1,
+        title: `chat numero ${prevItems.length + 1}`,
+      },
+      ...prevItems,
+    ])
+  }
+
+  const changeItemName = ({e,id, newName, setOnChange} : {e:React.KeyboardEvent,id:number, newName:string, setOnChange:React.Dispatch<React.SetStateAction<boolean>>}) =>{
+      if(e.key === "Enter"){
+        setOnChange(false)
+        setChats((prev) =>
+          prev.map((chat) => chat.id === id ? {...chat, title:newName} : chat))
+      }
+  
+  }
+
+  const deleteItem = (id : number) =>{
+    setChats((prev) =>{
+      const newChats = prev.filter((chat) => chat.id !== id)
+      return newChats
+    })
+  }
+
+  const ChatItem = ({item} : {item:{id:number, title:string}}) => {
+    const [name, setName] = useState<string>(item.title)
+    const [onChange, setOnChange] = useState<boolean>(false)
+    return (
+      <span
+        className="flex justify-between rounded-sm text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
+      >
+        {
+          onChange ? 
+          (
+            <Input value={name} onKeyDown={(e) => changeItemName({e, id:item.id, newName:name, setOnChange})} onChange={(e) => setName(e.target.value)}></Input>
+          )
+          :
+          (
+            <h1 className="text-white">{item.title}</h1>
+          )
+        }
+        <Dropdown deleteItem={() => deleteItem(item.id)} setOnChange={() => setOnChange(!onChange)} />
+
+      </span>
+    )
+  }
 
 
   return (
-    <Sidebar className="hover:cursor-pointer">
+    <Sidebar className="">
       {/* Header con botón */}
       <SidebarHeader className="bg-gray-800">
-        <SidebarMenuButton onClick={addItem} className="bg-gray-700 hover:bg-gray-600 transition-colors text-white flex items-center gap-2">
+        <SidebarMenuButton onClick={addItem} className="flex items-center gap-2
+        text-white bg-gray-700 hover:bg-gray-600 hover:text-white hover:cursor-pointer 
+        transition-colors
+         ">
           <Plus className="w-4 h-4" />
           Crear nuevo chat
         </SidebarMenuButton>
@@ -91,7 +104,7 @@ export default function SidebarComponent() {
       </SidebarContent>
 
       {/* Footer */}
-      
+
     </Sidebar>
   )
 }
