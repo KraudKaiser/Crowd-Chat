@@ -1,0 +1,80 @@
+{
+  "chats": [
+    {
+      "id": 1,
+      "title": "Búsqueda de recetas",
+      "createdAt": "2025-09-10T14:23:00Z",
+      "messages": [
+        {
+          "id": 1,
+          "owner": "you",
+          "message": "Hola, ¿me puedes dar una receta fácil de pasta?",
+          "timestamp": "2025-09-10T14:23:05Z"
+        },
+        {
+          "id": 2,
+          "owner": "bot",
+          "message": "Claro, una receta rápida es pasta con ajo y aceite. ¿Quieres que te dé los pasos?",
+          "timestamp": "2025-09-10T14:23:10Z"
+        },
+        {
+          "id": 3,
+          "owner": "you",
+          "message": "Sí, por favor.",
+          "timestamp": "2025-09-10T14:23:15Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Asistente de estudio",
+      "createdAt": "2025-09-11T09:12:00Z",
+      "messages": [
+        {
+          "id": 1,
+          "owner": "you",
+          "message": "Explícame la teoría de la relatividad en palabras simples.",
+          "timestamp": "2025-09-11T09:12:10Z"
+        },
+        {
+          "id": 2,
+          "owner": "bot",
+          "message": "Es la idea de que el espacio y el tiempo no son absolutos, sino que dependen de la velocidad y la gravedad.",
+          "timestamp": "2025-09-11T09:12:20Z"
+        },
+        {
+          "id": 3,
+          "owner": "bot",
+          "message": "Por ejemplo, un reloj en un avión que va muy rápido puede marcar el tiempo de forma distinta a un reloj en la tierra.",
+          "timestamp": "2025-09-11T09:12:30Z"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Conversación casual",
+      "createdAt": "2025-09-11T15:45:00Z",
+      "messages": [
+        {
+          "id": 1,
+          "owner": "you",
+          "message": "¿Cómo estás?",
+          "timestamp": "2025-09-11T15:45:05Z"
+        },
+        {
+          "id": 2,
+          "owner": "bot",
+          "message": "Estoy bien, gracias por preguntar 😊. ¿Y tú?",
+          "timestamp": "2025-09-11T15:45:10Z",
+          "sentiment": "friendly"
+        },
+        {
+          "id": 3,
+          "owner": "you",
+          "message": "Todo bien, gracias!",
+          "timestamp": "2025-09-11T15:45:20Z"
+        }
+      ]
+    }
+  ]
+}

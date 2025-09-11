@@ -14,13 +14,14 @@ import {  Plus,  } from "lucide-react"
 import React, { useState } from "react"
 import Dropdown from "./DropdownMenu"
 import { Input } from "../ui/input"
+import { useGetChats } from "@/hooks/useChats"
+import Link from "next/link"
 
 export default function SidebarComponent() {
-  const [chats, setChats] = useState([{
-    id: 1,
-    title: "hola"
-  }])
-
+  const chats = useGetChats()
+  const [chat, setChats] = useState([])
+  console.log(chats)
+  
 
   const addItem = () => {
     setChats((prevItems) => [
@@ -52,7 +53,7 @@ export default function SidebarComponent() {
     const [name, setName] = useState<string>(item.title)
     const [onChange, setOnChange] = useState<boolean>(false)
     return (
-      <span
+      <Link href={`/${item.id}`}
         className="flex justify-between rounded-sm text-left px-3 py-2   hover:bg-gray-700 hover:cursor-pointer text-sm text-gray-200 transition-colors"
       >
         {
@@ -67,7 +68,7 @@ export default function SidebarComponent() {
         }
         <Dropdown deleteItem={() => deleteItem(item.id)} setOnChange={() => setOnChange(!onChange)} />
 
-      </span>
+      </Link>
     )
   }
 

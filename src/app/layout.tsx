@@ -6,6 +6,7 @@ import SidebarComponent from "@/components/Sidebar/Sidebar";
 
 
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,7 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
- 
+
  return (
     <html lang="en">
       <body
@@ -37,7 +38,7 @@ export default function RootLayout({
           <SidebarComponent />
 
           {/* Contenedor general */}
-          <div className="bg-cyan-950 flex flex-col w-full min-h-screen">
+          <div className="bg-gray-800 flex flex-col w-full min-h-screen">
             {/* Header con trigger */}
             
 
