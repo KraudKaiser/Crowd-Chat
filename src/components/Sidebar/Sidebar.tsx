@@ -18,9 +18,9 @@ import { useGetChats } from "@/hooks/useChats"
 import Link from "next/link"
 
 export default function SidebarComponent() {
-  const chats = useGetChats()
-  const [chat, setChats] = useState([])
-  console.log(chats)
+  const {chats, setChats, loading} = useGetChats()
+
+
   
 
   const addItem = () => {
@@ -28,6 +28,8 @@ export default function SidebarComponent() {
       {
         id: chats.length + 1,
         title: `chat numero ${prevItems.length + 1}`,
+        createdAt: Date.now().toString(),
+        messages:[]
       },
       ...prevItems,
     ])
@@ -96,7 +98,7 @@ export default function SidebarComponent() {
           {/* ScrollArea envolviendo la lista */}
           <ScrollArea className="h-[400px] pr-2">
             <SidebarGroupContent className="flex flex-col gap-2 p-2">
-              {chats.reverse().map((item) => (
+              {!loading && chats.reverse().map((item) => (
                 <ChatItem key={item.id} item={item} />
               ))}
             </SidebarGroupContent>

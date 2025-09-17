@@ -8,24 +8,54 @@ import { SendHorizontal } from "lucide-react";
 import { useState } from "react";
 import conversation from "@/Json/conversation.json"
 import { useSearchParams } from "next/navigation";
-import { useCreateChat } from "@/hooks/useChats";
+import { useGetChats } from "@/hooks/useChats";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [prompt, setPrompt] = useState<string>("")
-  
+  const {chats, setChats} = useGetChats()
   const createChat = async(e) =>{
     try{
       if("key" in e && e.key == "Enter"){
-        const newChat = await useCreateChat(prompt)
-        console.log(newChat)
+          const newChat = {
+        id: chats.length + 1,
+        title: prompt,
+        createdAt: Date.now().toString(),
+        messages: [
+          {
+            id: 1,
+            owner: "you",
+            message: prompt,
+            timestamp: Date.now().toString(),
+          },
+        ],
+      }
+        setChats((prevItems) =>[
+          newChat,
+          ...prevItems
+        ])
         router.push(`/${newChat.id}`)
       }
       if(e._reactName == "onClick"){
-        const newChat = await useCreateChat(prompt)
-        console.log(newChat)
+            const newChat = {
+        id: chats.length + 1,
+        title: prompt,
+        createdAt: Date.now().toString(),
+        messages: [
+          {
+            id: 1,
+            owner: "you",
+            message: prompt,
+            timestamp: Date.now().toString(),
+          },
+        ],
+      }
+        setChats((prevItems) =>[
+          newChat,
+          ...prevItems
+        ])
         router.push(`/${newChat.id}`)
       }
     }catch(e){
