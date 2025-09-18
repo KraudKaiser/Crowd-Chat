@@ -18,45 +18,23 @@ export default function Home() {
   const {chats, setChats} = useGetChats()
   const createChat = async(e) =>{
     try{
-      if("key" in e && e.key == "Enter"){
-          const newChat = {
-        id: chats.length + 1,
-        title: prompt,
-        createdAt: Date.now().toString(),
-        messages: [
-          {
-            id: 1,
-            owner: "you",
-            message: prompt,
-            timestamp: Date.now().toString(),
-          },
-        ],
-      }
-        setChats((prevItems) =>[
-          newChat,
-          ...prevItems
-        ])
-        router.push(`/${newChat.id}`)
-      }
-      if(e._reactName == "onClick"){
-            const newChat = {
-        id: chats.length + 1,
-        title: prompt,
-        createdAt: Date.now().toString(),
-        messages: [
-          {
-            id: 1,
-            owner: "you",
-            message: prompt,
-            timestamp: Date.now().toString(),
-          },
-        ],
-      }
-        setChats((prevItems) =>[
-          newChat,
-          ...prevItems
-        ])
-        router.push(`/${newChat.id}`)
+      if("key" in e && e.key == "Enter" || e._reactName == "onClick"){
+          const res = await fetch("/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: prompt,
+          message: prompt, 
+        }),
+      })
+
+      const newChat = await res.json()
+
+      // Actualizar estado local
+      setChats((prev) => [newChat, ...prev])
+
+      // Redirigir al nuevo chat
+      router.push(`/${newChat.id}`)
       }
     }catch(e){
       console.error("Ocurrio un error: ", e)
