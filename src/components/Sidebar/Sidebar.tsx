@@ -7,7 +7,6 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {  Plus,  } from "lucide-react"
@@ -16,26 +15,10 @@ import Dropdown from "./DropdownMenu"
 import { Input } from "../ui/input"
 import { useGetChats } from "@/hooks/useChats"
 import Link from "next/link"
-
 export default function SidebarComponent() {
   const {chats, setChats, loading} = useGetChats()
 
-
-  
-
-  const addItem = () => {
-    setChats((prevItems) => [
-      {
-        id: chats.length + 1,
-        title: `chat numero ${prevItems.length + 1}`,
-        createdAt: Date.now().toString(),
-        messages:[]
-      },
-      ...prevItems,
-    ])
-  }
-
-  const changeItemName = ({e,id, newName, setOnChange} : {e:React.KeyboardEvent,id:number, newName:string, setOnChange:React.Dispatch<React.SetStateAction<boolean>>}) =>{
+  const changeItemName = ({e,id, newName, setOnChange} : {e:React.KeyboardEvent,id:string, newName:string, setOnChange:React.Dispatch<React.SetStateAction<boolean>>}) =>{
       if(e.key === "Enter"){
         setOnChange(false)
         setChats((prev) =>
@@ -44,14 +27,14 @@ export default function SidebarComponent() {
   
   }
 
-  const deleteItem = (id : number) =>{
+  const deleteItem = (id : string) =>{
     setChats((prev) =>{
       const newChats = prev.filter((chat) => chat.id !== id)
       return newChats
     })
   }
 
-  const ChatItem = ({item} : {item:{id:number, title:string}}) => {
+  const ChatItem = ({item} : {item:{id:string, title:string}}) => {
     const [name, setName] = useState<string>(item.title)
     const [onChange, setOnChange] = useState<boolean>(false)
     return (
@@ -79,13 +62,13 @@ export default function SidebarComponent() {
     <Sidebar className="">
       {/* Header con botón */}
       <SidebarHeader className="bg-gray-800">
-        <SidebarMenuButton onClick={addItem} className="flex items-center gap-2
+        <Link href={"/"}  className="flex items-center gap-2 rounded-md p-2
         text-white bg-gray-700 hover:bg-gray-600 hover:text-white hover:cursor-pointer 
         transition-colors
          ">
           <Plus className="w-4 h-4" />
           Crear nuevo chat
-        </SidebarMenuButton>
+        </Link>
       </SidebarHeader>
 
       {/* Scrollable chats */}

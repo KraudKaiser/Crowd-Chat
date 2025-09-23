@@ -1,41 +1,46 @@
 "use client"
-import ChatHistorial from "@/components/chat/ChatHistorial";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { SendHorizontal } from "lucide-react";
 import { useState } from "react";
-import conversation from "@/Json/conversation.json"
-import { useSearchParams } from "next/navigation";
+
 import { useGetChats } from "@/hooks/useChats";
 import { useRouter } from "next/navigation";
+import { ProcessStream, processStreamNewChat } from "@/lib/ProcessStream";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function Home() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [prompt, setPrompt] = useState<string>("")
-  const {chats, setChats} = useGetChats()
-  const createChat = async(e) =>{
+  const {setChats} = useGetChats()
+  const {settings} = useSettings()
+  
+  const createChat = async(e : React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) =>{
     try{
-      if("key" in e && e.key == "Enter" || e._reactName == "onClick"){
-          const res = await fetch("/api/chats", {
+      if (("key" in e && e.key !== "Enter") && !("_reactName" in e && e._reactName === "onClick")) return
+        
+      
+      const res = await fetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: prompt,
-          message: prompt, 
+          message: prompt,
+          model:settings.model,
+          tokens:settings.maxTokens,
         }),
       })
 
-      const newChat = await res.json()
 
-      // Actualizar estado local
-      setChats((prev) => [newChat, ...prev])
+      const newChat = await res
+      
+      const newchatid = await processStreamNewChat(prompt,newChat, setChats)
 
       // Redirigir al nuevo chat
-      router.push(`/${newChat.id}`)
-      }
+      router.push(`/${newchatid}`)
+     
+      
     }catch(e){
       console.error("Ocurrio un error: ", e)
     }
@@ -57,7 +62,7 @@ export default function Home() {
           onKeyDown={(e) => createChat(e)}
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="flex-1 border-none focus-visible:ring-0 font-mono text-white bg-gray-700"
+          className="flex-1 border-none focus-visible:ring-0 font-mono text-white bg-gray-700 placeholder:text-white"
           placeholder="Escribe tu mensaje..."
         />
         <Button

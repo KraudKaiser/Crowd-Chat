@@ -1,7 +1,7 @@
 {
   "chats": [
     {
-      "id": 1,
+      "id": "12a4aba6-7fe9-41ca-b8b8-ca8d8f3d2167",
       "title": "Búsqueda de recetas",
       "createdAt": "2025-09-10T14:23:00Z",
       "messages": [
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "12a4aba6-7fe9-41ca-b8b8-ad8d8f3de167",
       "title": "Asistente de estudio",
       "createdAt": "2025-09-11T09:12:00Z",
       "messages": [
@@ -51,7 +51,7 @@
       ]
     },
     {
-      "id": 3,
+      "id":"12a4aba6-7fe9-faca-b8b8-ca8d8f3de167",
       "title": "Conversación casual",
       "createdAt": "2025-09-11T15:45:00Z",
       "messages": [

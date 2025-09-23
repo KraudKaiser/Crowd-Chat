@@ -1,10 +1,12 @@
 "use client"
 
 import conversation from "@/Json/conversation.json"
+import { Chats } from "@/types/chats"
+import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export const useGetChats = () => {
-  const [chats, setChats] = useState([])
+  const [chats, setChats] = useState<Chats>([])
   const  [loading, setLoading] = useState(false)
   useEffect(() =>{
     setLoading(true)
@@ -29,3 +31,4 @@ export const useGetChats = () => {
   
   return {chats, setChats, loading}
 }
+
