@@ -64,7 +64,7 @@ Crowd Chat esta pensado como una SPA (Single Page Application) para un rapido fu
 Next JS fue seleccionado como tecnologia, gracias a sus herramientas de facil enrutado, manejo de componentes React
 y su funcionalidad Next API Routes. 
 
-### Inicio de la pagina.
+## Inicio de la pagina.
 
 Desde el primer momento en que entras, la pagina esta analizando tu **localStorage**. Corroborando si tienes chats guardados para renderizarlos en el Sidebar con el historial de chats. 
 
@@ -78,4 +78,4 @@ Estas configuraciones, estan ligadas a un Contexto llamado **SettingsContext**.
 Esto es importante, ya que el contexto es lo que permite mas adelante, hacer saber de estas
 configuraciones al **Backend** para limitar o potenciar las respuestas del bot.
 
-### Escribir al Bot 🤖
+## Escribir al Bot 🤖
