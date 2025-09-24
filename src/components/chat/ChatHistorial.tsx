@@ -8,7 +8,7 @@ export default function ChatHistorial({ chat, receivingAnswer }: { chat: Histori
   if (!chat || !chat.messages) {
     return <h1>No hay chats</h1>;
   }
-  
+  console.log(chat)
   return (
     <section className="h-full flex flex-1  p-2 ">
       {chat.messages.length === 0 ? (

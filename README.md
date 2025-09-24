@@ -79,3 +79,131 @@ Esto es importante, ya que el contexto es lo que permite mas adelante, hacer sab
 configuraciones al **Backend** para limitar o potenciar las respuestas del bot.
 
 ## Escribir al Bot 🤖
+Cuando estamos en la **Home Page**, al momento de escribir una peticion, esta es enviada al backend de manera diferente a como se hara en el resto de la conversacion. Pues debe crear el chat separado, donde se guardaran todos los mensajes. 
+
+Por eso, es que existe una ruta *api/chats/routes.ts* y otra *api/chats/[id]/routes.ts*.
+
+Cada una maneja comportamientos distintos. Pues sabemos que en un chat nuevo, el backend no tendra que procesar el historial de chats y nos ahorrara codigo. Ademas, ayuda a la legibilidad.
+
+### Conversacion ya creada 
+
+Al ya estar creada la conversacion, se nos redirige a una url con un ID. Ese ID es el id de la conversacion. Permitiendonos acceder a los mensajes de solo ese chat. 
+
+Aca entra el componente **ChatHistorial** Que se encarga de analizar toda la parte de los mensajes leidos, detectando aquellos que sean del usuario, aquellos del bot y incluso los que se tratan de imagenes. 
+
+# Funcionamiento en el Backend
+La aplicacion funciona correctamente a traves de realizar solo peticiones de tipo *POST* 
+al Backend. Se envian los resultados de las peticiones al bot en las respuestas de las peticiones y 
+son procesadas por el Frontend para guardarlas en **LocalStorage**.
+
+```bash
+
+## Esta es la peticion [id] para los mensajes en una conversacion ya creada.
+export async function POST(req: Request) {
+  try {
+    const { message, history, tokens, model, historyLimit }: { message: string; history: Message[], tokens:number, model:string, historyLimit:number } = await req.json();
+
+    const reducedHistory = history.slice(-historyLimit); // recorta el historial de mensajes para el contexto
+    const wantsImage = imageTriggers.some((t) => message.toLowerCase().includes(t));
+
+    const userRole =
+      roleTriggers.find((r) =>
+        r.phrases.some((p) => message.toLowerCase().includes(p))
+      )?.role || "assistant";
+
+    if (wantsImage) {
+      // Genera un pequeño texto de acompañamiento y la imagen
+      const textResponse = await openai.chat.completions.create({
+        model: model,
+        messages: [
+          { role: "system", content: "Te estan solicitando que crees una imagen. Tu trabajo es darle una respuesta afirmativa al usuario y confirmarle que estas generando la imagen textualmente" },
+          { role: "user", content: message },
+        ],
+        max_tokens: 50,
+      });
+
+      const miniText = textResponse.choices[0]?.message?.content || "Aquí tienes la imagen:";
+
+      const image = await openai.images.generate({
+        model: "dall-e-2",
+        prompt: message,
+        size: "512x512",
+      });
+
+      const botMessage = createBotImageMessage(miniText, image.data[0].url);
+
+      return NextResponse.json([botMessage],{
+        status:200,
+        headers:{
+          "x-response-type":"json" 
+        }
+      });
+    } else {
+      // Caso texto (Streaming)
+      const response = await openai.chat.completions.create({
+        model: model,
+        stream: true,
+        max_completion_tokens:tokens,
+        messages: [
+          { role: "system", content: `Eres un ${userRole}. Responde breve y claro.` },
+          ...reducedHistory.map((m) => ({
+            role: m.owner === "you" ? "user" : "assistant",
+            content: m.message,
+          })),
+          { role: "user", content: message },
+        ],
+      });
+
+      const encoder = new TextEncoder();
+
+      const stream = new ReadableStream({
+        async start(controller) {
+
+          let fullResponse = "";
+          for await (const chunk of response) {
+            const token = chunk.choices[0]?.delta?.content || "";
+            if (token) {
+              fullResponse += token;
+              controller.enqueue(
+                encoder.encode(
+                  JSON.stringify({ type: "bot-temp", data: createBotTempMessage(fullResponse) }) + "\n"
+                )
+              );
+            }
+          }
+
+          // 3. Emitir mensaje final del bot
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({ type: "bot", data: createBotMessage(fullResponse) }) + "\n"
+            )
+          );
+
+          controller.close();
+        },
+      });
+      // Headers personalizados para encontrar facilmente respuesta de tipo imagen o tipo texto
+      return new Response(stream, {
+        headers: {
+    "Content-Type": "text/event-stream; charset=utf-8", 
+    "Cache-Control": "no-cache, no-transform",
+    "X-Accel-Buffering": "no",    
+    "x-response-type": "stream",   
+  },
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: `Error: ${e}` }, { status: 500 });
+  }
+}
+
+```
+
+Lo primero que hace la aplicacion, es detectar en base a patrones sencillos, si el usuario esta pidiendo **generar una imagen** o si busca una **respuesta textual**
+
+A su vez, intenta recolectar de una lista de roles, si puede detectar algun **Rol Especifico** que el usuario quiera que tenga la inteligencia artificial. 
+
+Y finalmente, se decide si utilizara la funcion para generar imagenes, o la que genera respuestas textuales.
+
+**Mo

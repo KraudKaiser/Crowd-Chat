@@ -42,7 +42,7 @@ export default function Home() {
         }),
       });
 
-    
+      console.log(res)
       const newChatId = await processStreamNewChat(trimmed, res, setChats);
 
     
