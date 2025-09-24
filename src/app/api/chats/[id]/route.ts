@@ -28,6 +28,12 @@ export async function POST(req: Request) {
     const messages = buildMessages(history, historyLimit, message, userRole);
     return await streamTextResponse(openai, model, tokens, messages);
   } catch (e) {
+    if (e.code == "invalid_api_key" || e.message.includes("Invalid API key")) {
+      return NextResponse.json(
+        { error: "La API Key no está configurada o es inválida." },
+        { status: 401 }
+      );
+    }
     console.error(e);
     return NextResponse.json({ error: `Error: ${e}` }, { status: 500 });
   }

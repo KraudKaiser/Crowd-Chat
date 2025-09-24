@@ -19,6 +19,7 @@ export default function ChatPage() {
   const {settings} = useSettings()
   const [indexWanted, setIndexWanted] = useState<number | null>(null)
   const [prompt, setPrompt] = useState("")
+  const [error, setError] = useState<boolean>(false)
   const [receivingAnswer, setReceivingAnswer] = useState<boolean>(false)
 
   
@@ -62,6 +63,13 @@ export default function ChatPage() {
       tokens:settings.maxTokens,
     }),
   });
+
+  if (res.status === 401) {
+      // Mensaje especial si falta o es incorrecta la API Key
+      setError(true)
+      return;
+    }
+
   const responseType = res.headers.get("x-response-type") || "";
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   
@@ -94,7 +102,8 @@ export default function ChatPage() {
 }
 
   if (loading) {
-    return (<main className="flex flex-col h-screen bg-gray-900">
+    return (
+    <main className="flex flex-col h-screen bg-gray-900">
       <div className="flex-1 flex justify-center items-center overflow-hidden">
         <ScrollArea className="w-full h-full">
           <span>Cargando...</span>
@@ -112,11 +121,29 @@ export default function ChatPage() {
     )
   }
 
+  if(error){
+    return(
+       <main className="flex flex-col h-screen bg-gray-900">
+      <div className="bg-red-500 text-center p-6 text-white font-bold flex-1 flex justify-center items-center overflow-hidden">
+          <h1>Ha ocurrido un error: Es probable que no hayas insertado tu API KEY en un archivo de entorno (.env)
+            Recomendamos: Colocar la API Key en el archivo .env y reiniciar la aplicacion
+          </h1>
+      </div>
+      <section className="flex  items-center bg-gray-800 border rounded-sm border-gray-600 p-2">
+        <Input onKeyDown={(e) => addMessage(e)} value={prompt} onChange={(e) => setPrompt(e.target.value)} className="border-none focus-visible:ring-0
+      font-mono text-white
+      "></Input>
+        <Button onClick={(e) => addMessage(e)} disabled={prompt.length == 0} className={`bg-gray-800 `}>
+          <SendHorizontal className={`${prompt.length == 0 ? "opacity-0" : "opacity-100"} transition-opacity ease-in-out duration-200`} />
+        </Button>
+      </section>
+    </main>
+    )
+  }
+
   return (
     <main className="flex flex-col h-screen bg-gray-900">
       <div className="flex-1 flex justify-center items-center overflow-hidden">
-
-    
         <ChatHistorial chat={chats[indexWanted]} receivingAnswer={receivingAnswer} />
       </div>
       <section className="flex  items-center bg-gray-800 border rounded-sm border-gray-600 p-2">

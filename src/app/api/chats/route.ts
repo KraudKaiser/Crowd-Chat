@@ -36,6 +36,13 @@ export async function POST(req: Request) {
     return await streamTextResponse(openai, model, tokens, messages);
   } catch (error) {
     console.error(error);
+    if (error.code == "invalid_api_key" || error.message.includes("Invalid API key")) {
+      return NextResponse.json(
+        { error: "La API Key no está configurada o es inválida." },
+        { status: 401 }
+      );
+    }
+
     return NextResponse.json(
       { error: `Ha ocurrido un error: ${error}` },
       { status: 500 }

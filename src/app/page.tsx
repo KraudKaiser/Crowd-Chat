@@ -14,6 +14,7 @@ import { createUserMessage } from "@/lib/messages";
 export default function Home() {
   const router = useRouter();
   const [prompt, setPrompt] = useState<string>("");
+  const [error, setError] = useState<boolean>(false)
   const [tempMessage, setTempMessage] = useState<string | null>(null);
   const [receivingAnswer, setReceivingAnswer] = useState<boolean>(false);
   const { setChats } = useGetChats();
@@ -25,7 +26,7 @@ export default function Home() {
     const trimmed = prompt.trim();
     if (!trimmed) return;
 
-
+    setError(false)
     setPrompt("");
     setTempMessage(trimmed);
     setReceivingAnswer(true);
@@ -42,7 +43,13 @@ export default function Home() {
         }),
       });
 
+      if (res.status === 401) {
+      // Mensaje especial si falta o es incorrecta la API Key
       console.log(res)
+      setError(true)
+      return;
+    }
+
       const newChatId = await processStreamNewChat(trimmed, res, setChats);
 
     
@@ -51,6 +58,7 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Error creando chat:", err);
+      
     } finally {
      
       setTempMessage(null);
@@ -71,8 +79,19 @@ export default function Home() {
     void createChat();
   };
 
+  
+
   return (
     <main className="flex flex-col h-screen">
+      {
+        error && (
+           <div className="bg-red-500 text-center p-6 text-white font-bold flex-1 flex justify-center items-center overflow-hidden">
+              <h1>Ha ocurrido un error: Es probable que no hayas insertado tu API KEY en un archivo de entorno (.env)
+                Recomendamos: Colocar la API Key en el archivo .env y reiniciar la aplicacion
+              </h1>
+            </div>
+        )
+      }
       {!receivingAnswer && !tempMessage && (
         <div className="flex flex-1 justify-center items-center">
           <h1 className="font-mono font-semibold text-4xl text-white text-center">
