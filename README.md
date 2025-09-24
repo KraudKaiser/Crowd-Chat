@@ -1,4 +1,4 @@
-# Crowd Chat
+#  Crowd Chat
 
 Crowd Chat, tu *ChatBot* en tiempo real de "bolsillo". Una Aplicacion diseñada en *NextJS* para poder leer tus peticiones, analizarlas y brindarte una respuesta acorde. Incluyendo ajustes para *calibrar* las respuestas a tus necesidades.
 
@@ -59,3 +59,23 @@ src/
 ```
 
 # Funcionamiento de Crowd Chat ⚙️
+
+Crowd Chat esta pensado como una SPA (Single Page Application) para un rapido funcionamiento y renderizado
+Next JS fue seleccionado como tecnologia, gracias a sus herramientas de facil enrutado, manejo de componentes React
+y su funcionalidad Next API Routes. 
+
+### Inicio de la pagina.
+
+Desde el primer momento en que entras, la pagina esta analizando tu **localStorage**. Corroborando si tienes chats guardados para renderizarlos en el Sidebar con el historial de chats. 
+
+Si no, simplemente se mostrara la pagina de inicio, esperando la accion de el usuario. 
+
+En la parte derecha del *Header*, el usuario podra observar un boton de configuracion.
+
+Este boton mostrara una ventana con una serie de configuraciones, limitadas por el momento.
+
+Estas configuraciones, estan ligadas a un Contexto llamado **SettingsContext**.
+Esto es importante, ya que el contexto es lo que permite mas adelante, hacer saber de estas
+configuraciones al **Backend** para limitar o potenciar las respuestas del bot.
+
+### Escribir al Bot 🤖
