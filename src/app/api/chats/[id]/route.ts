@@ -1,6 +1,5 @@
-import { createBotImageMessage, createBotMessage, createBotTempMessage, createImageMessage, createUserMessage } from "@/lib/messages";
-import { processImageRequest } from "@/lib/ProcessImageRequest";
-import { ExistingChatStreamResponse } from "@/lib/ProcessStream";
+import { createBotImageMessage, createBotMessage, createBotTempMessage, createUserMessage } from "@/lib/messages";
+
 import { roleTriggers } from "@/lib/RoleTriggers";
 import { Message } from "@/types/message";
 import { NextResponse } from "next/server";
@@ -9,6 +8,7 @@ import OpenAI from "openai";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 // Lista de frases que indican que el usuario quiere una imagen
+//como solucion provisional.
 const imageTriggers = [
   "quiero que renderices una imagen",
   "quiero que crees una imagen",
@@ -19,16 +19,11 @@ const imageTriggers = [
 ];
 
 
-// Codigo dado por chat gpt
-
-
-
-
 export async function POST(req: Request) {
   try {
     const { message, history, tokens, model, historyLimit }: { message: string; history: Message[], tokens:number, model:string, historyLimit:number } = await req.json();
 
-    const reducedHistory = history.slice(-historyLimit); // últimos 10 mensajes para contexto
+    const reducedHistory = history.slice(-historyLimit); // recorta el historial de mensajes para el contexto
     const wantsImage = imageTriggers.some((t) => message.toLowerCase().includes(t));
 
     const userRole =
@@ -37,7 +32,7 @@ export async function POST(req: Request) {
       )?.role || "assistant";
 
     if (wantsImage) {
-      // Caso imagen (JSON)
+      // Genera un pequeño texto de acompañamiento y la imagen
       const textResponse = await openai.chat.completions.create({
         model: model,
         messages: [
@@ -107,13 +102,13 @@ export async function POST(req: Request) {
           controller.close();
         },
       });
-
+      // Headers personalizados para encontrar facilmente respuesta de tipo imagen o tipo texto
       return new Response(stream, {
         headers: {
-    "Content-Type": "text/event-stream; charset=utf-8", // o "application/x-ndjson"
+    "Content-Type": "text/event-stream; charset=utf-8", 
     "Cache-Control": "no-cache, no-transform",
-    "X-Accel-Buffering": "no",     // ayuda en algunos hosts a desactivar buffering
-    "x-response-type": "stream",   // <-- CABECERA CLAVE
+    "X-Accel-Buffering": "no",    
+    "x-response-type": "stream",   
   },
       });
     }

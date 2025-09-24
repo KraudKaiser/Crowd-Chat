@@ -1,8 +1,5 @@
 "use client"
-
-import conversation from "@/Json/conversation.json"
 import { Chats } from "@/types/chats"
-import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export const useGetChats = () => {
@@ -13,10 +10,6 @@ export const useGetChats = () => {
     const stored = localStorage.getItem("chats")
     if(stored){
       setChats(JSON.parse(stored))
-      setLoading(false)
-    }else{
-      setChats(conversation.chats)
-      localStorage.setItem("chats", JSON.stringify(conversation.chats))
       setLoading(false)
     }
   },[])

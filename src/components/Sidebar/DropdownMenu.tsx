@@ -1,7 +1,10 @@
+import { useRouter } from "next/navigation"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuShortcut, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Edit, Trash } from "lucide-react"
 
 export default function Dropdown({deleteItem, setOnChange} : {deleteItem:VoidFunction, setOnChange:VoidFunction}){
+    const router = useRouter()
+    
     return(
         <DropdownMenu>
                     <DropdownMenuTrigger  asChild>
@@ -18,10 +21,12 @@ export default function Dropdown({deleteItem, setOnChange} : {deleteItem:VoidFun
                             Cambiar Nombre de Chat
                             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={deleteItem} className="text-xs text-red-400">
+                        <DropdownMenuItem onSelect={() => {
+                            deleteItem();
+                            setTimeout(() => router.push("/"), 150);
+                            }} className="text-xs text-red-400">
                             <Trash color="red"/>
                             Eliminar Chat
-                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         </DropdownMenuGroup>
                         

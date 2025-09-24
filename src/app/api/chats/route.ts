@@ -6,18 +6,15 @@ import { v4 as uuidv4 } from "uuid";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
-/**
- * Detecta si el mensaje del usuario pide una imagen
- */
+// Detecta si el mensaje del usuario pide una imagen
 function detectWantsImage(message: string): boolean {
   return imageTriggers.some((trigger) =>
     message.toLowerCase().includes(trigger)
   );
 }
 
-/**
- * Detecta el rol que debe tomar la IA
- */
+// Detecta el rol que debe tomar la IA
+ 
 function detectUserRole(message: string): string {
   return (
     roleTriggers.find((r) =>
@@ -26,9 +23,7 @@ function detectUserRole(message: string): string {
   );
 }
 
-/**
- * Genera un mensaje de acompañamiento y una imagen
- */
+// Genera un mensaje de acompañamiento y una imagen
 async function generateImageResponse(message: string, model:string) {
   // Mensaje corto de acompañamiento
   const textResponse = await openai.chat.completions.create({
@@ -61,9 +56,8 @@ async function generateImageResponse(message: string, model:string) {
   };
 }
 
-/**
- * Genera una respuesta en streaming de texto
- */
+// Genera una respuesta en streaming de texto
+ 
 async function streamChatResponse(message: string, userRole: string, max_tokens:number, model:string) {
     try{
 
@@ -80,7 +74,7 @@ async function streamChatResponse(message: string, userRole: string, max_tokens:
             ],
         });
         
-        
+        // Funcion que analiza la respuesta en forma de Stream y la construye
         const encoder = new TextEncoder();
         
         const stream = new ReadableStream({
@@ -100,9 +94,7 @@ return new Response(stream, {
 }
 }
 
-/**
- * Endpoint principal
- */
+
 export async function POST(req: Request) {
   try {
       const { message, tokens, model } = await req.json();
@@ -115,12 +107,10 @@ export async function POST(req: Request) {
 
     if (wantsImage) {
       // Caso imagen
-      console.log("ejecutando caso image")
       const imageResponse = await generateImageResponse(message, model);
       return NextResponse.json(imageResponse);
     } else {
         // Caso texto (streaming)
-        console.log("ejecutando caso texto")
       return await streamChatResponse(message, userRole, tokens, model);
     }
   } catch (error) {

@@ -3,8 +3,9 @@
 import { Historial } from "@/types/historial";
 import { ScrollArea } from "../ui/scroll-area";
 import Image from "next/image";
+import { EllipsisAnimation } from "../ui/shadcn-io/spinner";
 
-export default function ChatHistorial({ chat }: { chat: Historial }) {
+export default function ChatHistorial({ chat, receivingAnswer }: { chat: Historial, receivingAnswer:boolean }) {
   if (!chat || !chat.messages) {
     return <h1>No hay chats</h1>;
   }
@@ -21,8 +22,8 @@ export default function ChatHistorial({ chat }: { chat: Historial }) {
             {chat.messages.map((message) => {
               if (message.type == "image_with_text" || message.type == "image") {
                 return (
-                <div className="flex flex-col w-[50%] h-full" key={message.id}>
-                    <p className="font-mono font-semibold text-white">
+                  <div className="bg-blue-900 p-2 rounded-md flex flex-col w-[50%] h-full" key={message.id}>
+                    <p className=" font-mono font-semibold text-white">
                       {message.message}
                     </p>
                     <img src={message.url} alt="Imagen" />
@@ -35,10 +36,10 @@ export default function ChatHistorial({ chat }: { chat: Historial }) {
                     key={message.id}
                     className={`p-2 rounded-md break-words max-w-[70%] ${
                       message.owner != "you"
-                        ? "bg-amber-400 self-start"
-                        : "bg-gray-500 self-end"
-                    }`}
-                  >
+                      ? "bg-blue-900 self-start"
+                      : "bg-gray-500 self-end"
+                      }`}
+                      >
                     <p className="font-mono font-semibold text-white">
                       {message.message}
                     </p>
@@ -46,6 +47,14 @@ export default function ChatHistorial({ chat }: { chat: Historial }) {
                 );
               }
             })}
+            {
+              receivingAnswer && (  
+                  <div className=" p-2 rounded-md flex items-center justify-center gap-4 w-[50%] h-full">
+                    <p className="text-white font-bold">Generando respuesta...</p>
+                    <EllipsisAnimation size={50} className="text-white" />
+                  </div>
+              )
+            }
           </div>
         </ScrollArea>
       )}

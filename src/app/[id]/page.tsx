@@ -20,6 +20,7 @@ export default function ChatPage() {
   const {settings} = useSettings()
   const [indexWanted, setIndexWanted] = useState<number | null>(null)
   const [prompt, setPrompt] = useState("")
+  const [receivingAnswer, setReceivingAnswer] = useState<boolean>(false)
 
   
   useEffect(() => {
@@ -39,12 +40,17 @@ export default function ChatPage() {
   if (!prompt.trim() || indexWanted === null) return;
 
   const newMessage = createUserMessage(prompt);
+
+
   setChats((prev) =>
     prev.map((c, i) =>
       i === indexWanted ? { ...c, messages: [...c.messages, newMessage] } : c
     )
   );
+
+  //setea variables para mostrar la generacion de respuesta
   setPrompt("");
+  setReceivingAnswer(true)
 
   const res = await fetch(`/api/chats/${id}`, {
     method: "POST",
@@ -60,22 +66,27 @@ export default function ChatPage() {
   const responseType = res.headers.get("x-response-type") || "";
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   
-  
+  //Este caso busca json para analizar URLS con posibles imagenes.
   if (responseType === "json" || contentType.includes("application/json")) {
-    // JSON (imagen u otros)
-    const messages = await res.json(); // [userMessage, botMessage] u otro formato
-    console.log(messages)
+   
+    const messages = await res.json(); 
     setChats(prev =>
       prev.map((c, i) => i === indexWanted ? { ...c, messages: [...c.messages, ...messages] } : c)
     );
+    setReceivingAnswer(false)
     setPrompt("")
-  } else if (responseType === "stream" || contentType.includes("text/event-stream") || contentType.includes("application/x-ndjson")) {
+  }
+  
+  //Busca si existe Stream de mensajes de distintas formas. 
+  else if (responseType === "stream" || contentType.includes("text/event-stream") || contentType.includes("application/x-ndjson")) {
     // Stream: procesar en tiempo real
     await processStreamExistingChat(res.body, indexWanted, setChats);
+    setReceivingAnswer(false)
     setPrompt("")
   } else if (res.body) {
     // Fallback: intentar stream si hay body, usar processStream
     await processStreamExistingChat(res.body, indexWanted, setChats);
+    setReceivingAnswer(false)
     setPrompt("")
 } else {
   console.error("Respuesta desconocida del backend");
@@ -107,7 +118,7 @@ export default function ChatPage() {
       <div className="flex-1 flex justify-center items-center overflow-hidden">
 
     
-        <ChatHistorial chat={chats[indexWanted]} />
+        <ChatHistorial chat={chats[indexWanted]} receivingAnswer={receivingAnswer} />
       </div>
       <section className="flex  items-center bg-gray-800 border rounded-sm border-gray-600 p-2">
         <Input

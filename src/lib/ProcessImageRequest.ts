@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 export async function processImageRequest(openai: OpenAI, prompt: string) {
-  // Pequeña respuesta textual
+  
   const textResponse = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -19,7 +19,6 @@ export async function processImageRequest(openai: OpenAI, prompt: string) {
   const miniText =
     textResponse.choices[0]?.message?.content || "Aquí tienes la imagen:";
 
-  // Generación de imagen
   const result = await openai.images.generate({
     model: "dall-e-2",
     prompt,
@@ -29,6 +28,6 @@ export async function processImageRequest(openai: OpenAI, prompt: string) {
   return NextResponse.json({
     type: "image_with_text",
     message: miniText,
-    url: result.data[0].url,
+    url: result.data[0]?.url ,
   });
 }

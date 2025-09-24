@@ -12,8 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { SettingsContextType, useSettings } from "@/context/SettingsContext";
-import { Tooltip, TooltipTrigger } from "../ui/tooltip";
-import { TooltipContent } from "@radix-ui/react-tooltip";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 function ModelSelect({ settings, updateSettings }: SettingsContextType) {
 
@@ -32,7 +36,7 @@ function ModelSelect({ settings, updateSettings }: SettingsContextType) {
             ?
             </Button>
         </TooltipTrigger>
-        <TooltipContent className=" bg-gray-800 p-2 rounded-full">
+        <TooltipContent side="top" className="bg-gray-800 text-white text-sm p-2 rounded-md shadow-md">
             Permite que utilices el modelo de lenguaje de tu eleccion.
         </TooltipContent>
       </Tooltip>
@@ -80,7 +84,7 @@ function TokensToggle({ settings, updateSettings }: SettingsContextType) {
             ?
             </Button>
         </TooltipTrigger>
-        <TooltipContent className=" bg-gray-800 p-2 rounded-full">
+        <TooltipContent side="top" className="bg-gray-800 text-white text-sm p-2 rounded-md shadow-md">
             Pone un limite a la cantidad de Tokens Maximos por peticion que hagas
         </TooltipContent>
       </Tooltip>
@@ -131,7 +135,7 @@ function HistorialToggle({ settings, updateSettings }: SettingsContextType) {
             ?
             </Button>
         </TooltipTrigger>
-        <TooltipContent className=" bg-gray-800 p-2 rounded-full">
+        <TooltipContent side="top" className="bg-gray-800 text-white text-sm p-2 rounded-md shadow-md">
             Pone un limite a la cantidad de mensajes que puede recordar la Inteligencia Artificial en el Chat
         </TooltipContent>
       </Tooltip>

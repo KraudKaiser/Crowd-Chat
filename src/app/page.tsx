@@ -1,74 +1,113 @@
-"use client"
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { SendHorizontal } from "lucide-react";
 import { useState } from "react";
-
 import { useGetChats } from "@/hooks/useChats";
 import { useRouter } from "next/navigation";
-import { ProcessStream, processStreamNewChat } from "@/lib/ProcessStream";
+import { processStreamNewChat } from "@/lib/ProcessStream";
 import { useSettings } from "@/context/SettingsContext";
+import { EllipsisAnimation } from "@/components/ui/shadcn-io/spinner";
+import { createUserMessage } from "@/lib/messages";
 
 export default function Home() {
-  const router = useRouter()
-  const [prompt, setPrompt] = useState<string>("")
-  const {setChats} = useGetChats()
-  const {settings} = useSettings()
+  const router = useRouter();
+  const [prompt, setPrompt] = useState<string>("");
+  const [tempMessage, setTempMessage] = useState<string | null>(null);
+  const [receivingAnswer, setReceivingAnswer] = useState<boolean>(false);
+  const { setChats } = useGetChats();
+  const { settings } = useSettings();
   
-  const createChat = async(e : React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) =>{
-    try{
-      if (("key" in e && e.key !== "Enter") && !("_reactName" in e && e._reactName === "onClick")) return
-        
-      
+  
+  const createChat = async () => {
+    if (receivingAnswer) return; 
+    const trimmed = prompt.trim();
+    if (!trimmed) return;
+
+
+    setPrompt("");
+    setTempMessage(trimmed);
+    setReceivingAnswer(true);
+    
+    try {
       const res = await fetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: prompt,
-          message: prompt,
-          model:settings.model,
-          tokens:settings.maxTokens,
+          title: trimmed,
+          message: trimmed,
+          model: settings.model,
+          tokens: settings.maxTokens,
         }),
-      })
+      });
 
+    
+      const newChatId = await processStreamNewChat(trimmed, res, setChats);
 
-      const newChat = await res
-      
-      const newchatid = await processStreamNewChat(prompt,newChat, setChats)
-
-      // Redirigir al nuevo chat
-      router.push(`/${newchatid}`)
+    
+      if (newChatId) {
+        router.push(`/${newChatId}`);
+      }
+    } catch (err) {
+      console.error("Error creando chat:", err);
+    } finally {
      
-      
-    }catch(e){
-      console.error("Ocurrio un error: ", e)
+      setTempMessage(null);
     }
-  }
+  };
+
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      void createChat();
+    }
+  };
 
  
-  return (
-    <main className=" flex flex-col h-screen ">
-      {/* Contenido centrado */}
-      <div className="flex flex-1 justify-center items-center">
-        <h1 className="font-mono font-semibold text-4xl text-white text-center">
-          ¿Qué deseas consultarme? :)
-        </h1>
-      </div>
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    void createChat();
+  };
 
-      {/* Input abajo */}
+  return (
+    <main className="flex flex-col h-screen">
+      {!receivingAnswer && !tempMessage && (
+        <div className="flex flex-1 justify-center items-center">
+          <h1 className="font-mono font-semibold text-4xl text-white text-center">
+            ¿Qué deseas consultarme? :)
+          </h1>
+        </div>
+      )}
+
+     
+      {receivingAnswer && tempMessage && (
+        <section className="flex flex-col flex-1 p-4 gap-4">
+          <div className="self-end bg-gray-500 rounded-md p-2 max-w-[70%]">
+            <p className="font-mono font-semibold text-white">{tempMessage}</p>
+          </div>
+
+          <div className="self-start flex items-center gap-3 bg-gray-700 rounded-md p-2 max-w-[70%]">
+            <p className="text-white font-bold">Generando respuesta...</p>
+            <EllipsisAnimation size={30} className="text-white" />
+          </div>
+        </section>
+      )}
+
       <section className="flex items-center bg-gray-800 border-t border-gray-600 p-2">
         <Input
-          onKeyDown={(e) => createChat(e)}
+          onKeyDown={handleKeyDown}
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="flex-1 border-none focus-visible:ring-0 font-mono text-white bg-gray-700 placeholder:text-white"
+          className="flex-1 border-none focus-visible:ring-0 font-mono text-white bg-gray-700 placeholder:text-gray-300"
           placeholder="Escribe tu mensaje..."
         />
         <Button
-          onClick={(e) => createChat(e)}
-          disabled={prompt.length === 0}
-          className="hover:cursor-pointer bg-gray-700 ml-2"
+          type="button"
+          onClick={handleClick}
+          disabled={!prompt.trim() || receivingAnswer}
+          className={`hover:cursor-pointer ml-2 ${prompt != "" ? "bg-gray-700" : "bg-gray-800"}`}
         >
           <SendHorizontal
             className={`${
