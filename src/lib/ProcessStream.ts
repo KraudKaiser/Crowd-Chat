@@ -1,6 +1,5 @@
 import { Chats } from "@/types/chats";
 import { Message } from "@/types/message";
-import { SetStateAction } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export async function processStreamExistingChat(

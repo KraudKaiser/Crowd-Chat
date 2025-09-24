@@ -2,7 +2,6 @@
 
 import { Historial } from "@/types/historial";
 import { ScrollArea } from "../ui/scroll-area";
-import Image from "next/image";
 import { EllipsisAnimation } from "../ui/shadcn-io/spinner";
 
 export default function ChatHistorial({ chat, receivingAnswer }: { chat: Historial, receivingAnswer:boolean }) {

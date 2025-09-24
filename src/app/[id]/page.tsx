@@ -6,13 +6,12 @@ import { Input } from "@/components/ui/input";
 import { useSettings } from "@/context/SettingsContext";
 import { useGetChats } from "@/hooks/useChats";
 import { createUserMessage } from "@/lib/messages";
-import {ExistingChatStreamResponse, processStreamExistingChat } from "@/lib/ProcessStream";
-import { Message } from "@/types/message";
+import {processStreamExistingChat } from "@/lib/ProcessStream";
+
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { SendHorizontal } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import {v4 as uuidv4} from "uuid"
 
 export default function ChatPage() {
   const { id } = useParams()

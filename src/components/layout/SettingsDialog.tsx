@@ -11,13 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { SettingsContextType, useSettings } from "@/context/SettingsContext";
+import { useSettings } from "@/context/SettingsContext";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  TooltipProvider,
 } from "@/components/ui/tooltip";
+import { SettingsContextType } from "@/types/settings";
 
 function ModelSelect({ settings, updateSettings }: SettingsContextType) {
 

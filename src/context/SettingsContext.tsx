@@ -1,17 +1,8 @@
 "use client";
 
+import { Settings, SettingsContextType } from "@/types/settings";
 import { createContext, useContext, useState, ReactNode } from "react";
 
-export type Settings = {
-    model:"gpt-4o-mini" | "gpt-3.5-turbo"
-  maxTokens: number
-  includeHistory: number
-};
-
-export type SettingsContextType = {
-  settings: Settings;
-  updateSettings: (newSettings: Partial<Settings>) => void;
-};
 
 const defaultSettings: Settings = {
     model:"gpt-4o-mini",
