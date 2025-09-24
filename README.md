@@ -126,6 +126,19 @@ export async function POST(req: Request) {
 
 Lo primero que hace la aplicacion, es detectar en base a patrones sencillos, si el usuario esta pidiendo **generar una imagen** o si busca una **respuesta textual**
 
+Hay que tener en cuenta, debido a las limitaciones de mi conocimiento, hay palabras en conjunto que activan este sistema de creacion de imagenes
+
+```bash
+export const imageTriggers = [
+  "quiero que renderices una imagen",
+  "quiero que crees una imagen",
+  "genera una imagen",
+  "dibuja una imagen",
+  "haz un dibujo",
+  "haz una ilustración",
+];
+```
+
 A su vez, intenta recolectar de una lista de roles, si puede detectar algun **Rol Especifico** que el usuario quiera que tenga la inteligencia artificial. 
 
 Y finalmente, se decide si utilizara la funcion para generar imagenes, o la que genera respuestas textuales.
