@@ -1,10 +1,10 @@
 # Crowd Chat
 
-Crowd Chat, tu ChatBot en tiempo real de "bolsillo". Una Aplicacion diseñada en NextJS para poder leer tus peticiones, analizarlas y brindarte una respuesta acorde. Incluyendo ajustes para ajustar las respuestas a tus necesidades.
+Crowd Chat, tu *ChatBot* en tiempo real de "bolsillo". Una Aplicacion diseñada en *NextJS* para poder leer tus peticiones, analizarlas y brindarte una respuesta acorde. Incluyendo ajustes para *calibrar* las respuestas a tus necesidades.
 
-Almacená tus chats en tu dispositivo de manera local, para recordar todas las conversaciones y tenerlas separadas para cada tema del que quieras conversar.
+*Almacená* tus chats en tu dispositivo de manera local, para recordar *todas* las conversaciones y tenerlas separadas para cada tema de tu interes.
 
-Crowd Chat es capaz de analizar una seleccion de roles a los cuales quieras ajustarlo, prueba todas las posibilidades. Y si el texto no te es suficiente, prueba pedirle imagenes con palabras claves.
+Crowd Chat es capaz de *analizar* una seleccion de *roles* a los cuales quieras ajustarlo, prueba todas las posibilidades. Y si el texto no te es suficiente, pruebá *pedirle imagenes* con palabras claves.
 
 A continuacion, sigue los pasos para instalar nuestra herramienta. 
 ---
@@ -32,4 +32,30 @@ npm run dev
 ## Esto abrira la aplicacion en http://localhost:3000
 ```
 
+### ¿Como esta estructurado Crowd Chat?
+```bash
+src/
+├── app/
+│   ├──layout.tsx             # Layout que rodea las paginas. Incluyendo Header
+│   ├── page.tsx              # Página principal (crear nuevo chat)
+│   ├── [id]/page.tsx         # Página de un chat existente
+│   └── api/                  # Crowd Chat utiliza NextJS API Routes para manejar sus peticiones Backend.
+│       └── chats/            # Endpoints para manejar mensajes y streaming
+│
+├── assets/
+│   ├──...                    # Guardamos cualquier tipo de imagen o icono que utilice la pagina.
+│
+│
+├── components/               # Componentes de UI
+│   ├── chat/                 # Historial de chat y UI relacionada
+│   ├── ui/                   # Componentes de Shadcn (Dialog, Button, etc.)
+│   └── Sidebar/              # Sidebar de navegación
+│   └──...                    # Se guardan en general todos los componentes que requiera la pagina.
+│
+├── context/                  # Contextos globales (ej: SettingsContext)
+├── hooks/                    # Hooks personalizados (ej: useGetChats)
+├── lib/                      # Funciones auxiliares (streaming, detecciones)
+└── types/                   # Tipado de Chats, Messages, Settings
+```
 
+# Funcionamiento de Crowd Chat ⚙️
