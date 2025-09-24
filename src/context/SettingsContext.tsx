@@ -1,7 +1,7 @@
 "use client";
 
 import { Settings, SettingsContextType } from "@/types/settings";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 
 const defaultSettings: Settings = {
@@ -13,10 +13,14 @@ const defaultSettings: Settings = {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(()=>{
-    const stored = localStorage.getItem("settings")
-    return stored ? JSON.parse(stored) : defaultSettings
-  });
+  const [settings, setSettings] = useState<Settings>(defaultSettings)
+
+  useEffect(() => {
+    const stored = localStorage.getItem("settings");
+    if (stored) {
+      setSettings(JSON.parse(stored));
+    }
+  }, []);
 
   const updateSettings = (newSettings: Partial<Settings>) => {
     setSettings((prev) => {

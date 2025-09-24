@@ -47,6 +47,11 @@ export default function Home() {
       // Mensaje especial si falta o es incorrecta la API Key
       console.log(res)
       setError(true)
+      return
+    }
+      if (!res.ok) {
+      console.log("Error en la respuesta del servidor", res.status);
+      setError(true);
       return;
     }
 
