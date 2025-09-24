@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { createBotMessage, createBotTempMessage } from "@/lib/messages";
-import { Historial } from "@/types/historial";
+
 
 export async function streamTextResponse(
   openai: OpenAI,
